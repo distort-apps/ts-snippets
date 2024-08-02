@@ -55,6 +55,8 @@ function initializeMonaco() {
     theme: 'vs-dark',
   });
 
+  simulateEscapeKeyPress();
+
   // Load saved snippets from storage
   chrome.storage.local.get(['tsSnippets'], function(result) {
     const snippets = result.tsSnippets || [];
@@ -106,7 +108,7 @@ function addSnippetToUI(snippet, index) {
 
   const deleteButton = document.createElement('button');
   deleteButton.classList.add('snippet-delete-button');
-  deleteButton.innerText = '✖';
+  deleteButton.innerText = 'x';
   deleteButton.addEventListener('click', (e) => {
     e.stopPropagation();
     deleteSnippet(index);
@@ -137,6 +139,20 @@ function loadSnippets() {
       addSnippetToUI(snippet, index);
     });
   });
+}
+
+function simulateEscapeKeyPress() {
+  const event = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    keyCode: 27,
+    code: 'Escape',
+    which: 27,
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  });
+
+  document.dispatchEvent(event);
 }
 
 function runSnippet(content) {
