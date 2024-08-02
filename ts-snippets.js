@@ -1,5 +1,5 @@
 const snippetsContainer = document.getElementById('snippets');
-const addSnippetButton = document.getElementById('addSnippet');
+const newSnippetButton = document.getElementById('newSnippet');
 const runSnippetButton = document.getElementById('runSnippet');
 let editor;
 
@@ -19,10 +19,11 @@ export function initializeMonaco() {
     });
   });
 
-  addSnippetButton.addEventListener('click', () => {
+  newSnippetButton.addEventListener('click', () => {
     const snippetContent = editor.getValue();
-    if (snippetContent.trim()) {
-      saveSnippet(snippetContent);
+    const title = prompt('Enter snippet title:');
+    if (snippetContent.trim() && title) {
+      saveSnippet(title, snippetContent);
     }
   });
 
@@ -32,32 +33,45 @@ export function initializeMonaco() {
       runSnippet(snippetContent);
     }
   });
+
+  // Add event listener for Command + Enter (Mac) or Ctrl + Enter (Windows/Linux)
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function() {
+    const snippetContent = editor.getValue();
+    if (snippetContent.trim()) {
+      runSnippet(snippetContent);
+    }
+  });
 }
 
-function saveSnippet(content) {
+function saveSnippet(title, content) {
   chrome.storage.local.get(['tsSnippets'], function(result) {
     const snippets = result.tsSnippets || [];
-    snippets.push(content);
+    snippets.push({ title, content });
     chrome.storage.local.set({ tsSnippets: snippets }, function() {
-      addSnippetToUI(content, snippets.length - 1);
+      addSnippetToUI({ title, content }, snippets.length - 1);
       editor.setValue('');
     });
   });
 }
 
-function addSnippetToUI(content, index) {
+function addSnippetToUI(snippet, index) {
   const snippetDiv = document.createElement('div');
   snippetDiv.classList.add('snippet');
-  snippetDiv.innerText = content;
+  snippetDiv.innerText = snippet.title;
   snippetDiv.dataset.index = index;
 
   const deleteButton = document.createElement('button');
-  deleteButton.innerText = 'Delete';
-  deleteButton.addEventListener('click', () => {
+  deleteButton.classList.add('snippet-delete-button');
+  deleteButton.innerText = '✖';
+  deleteButton.addEventListener('click', (e) => {
+    e.stopPropagation();
     deleteSnippet(index);
   });
 
   snippetDiv.appendChild(deleteButton);
+  snippetDiv.addEventListener('click', () => {
+    editor.setValue(snippet.content);
+  });
   snippetsContainer.appendChild(snippetDiv);
 }
 

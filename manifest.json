@@ -21,13 +21,13 @@
     "storage",
     "activeTab",
     "scripting",
-    "alarms",
     "notifications",
     "webNavigation",
     "webRequest",
     "tabs",
     "background",
-    "sidePanel"
+    "sidePanel",
+    "devtools"
   ],
   "host_permissions": [
     "<all_urls>"
