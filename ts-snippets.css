@@ -14,7 +14,7 @@ body {
 }
 
 #sidebar {
-  width: 130px; /* Adjust width as needed */
+  width: 130px; 
   background-color: #1C1C1EFF;
   color: #F2F2F7FF;
   padding: 10px;
@@ -22,16 +22,30 @@ body {
   flex-direction: column;
 }
 
-.snippet-button {
+.snippet-button,
+.snippet-title-input {
   background-color: transparent;
   color: #F2F2F7FF;
   border: none;
-  padding: 10px;
-  margin-bottom: 10px;
+  outline: none;
   cursor: pointer;
   text-align: left;
   width: 100%;
-  font-size: 12px;
+}
+
+.snippet-button {
+  font-size: 10px;
+  margin-bottom: 5px;
+  padding: 2px;
+}
+
+.snippet-title-input {
+  font-size: 8px;
+  margin-bottom: 0, auto, 2px;
+}
+
+.snippet-title-input::placeholder {
+  color: #F2F2F7FF;
 }
 
 #snippets {
@@ -41,10 +55,9 @@ body {
 }
 
 .snippet {
-  background-color: #2C2C2EFF;
-  margin: 5px 0;
-  padding: 10px;
-  cursor: pointer;
+  margin: 2px 0;
+  margin: 1px 0;
+  padding: .5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -59,14 +72,13 @@ body {
   flex-direction: column;
   background-color: #1e1e1e;
   flex-grow: 1;
-  width: calc(100% - 130px); /* Full width minus sidebar width */
   position: relative;
 }
 
 #editor {
   flex-grow: 1;
   width: 100%; /* Ensure editor takes full width */
-  height: calc(100vh - 60px); /* Full height minus button and margins */
+  height: calc(100vh - 20px); /* Full height minus button and margins */
   overflow: auto; /* Ensure the editor can scroll */
 }
 
@@ -76,10 +88,19 @@ body {
   border: none;
   padding: 10px;
   cursor: pointer;
-  font-size: 12px;
-  margin-top: 10px;
-  align-self: flex-end; /* Align button to the right */
-  margin-right: 10px; /* Add margin to right to align flush */
+  font-size: 10px;
+}
+.snippet-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.snippet-controls p {
+  color: #F2F2F7FF;
+  margin: 0;
+  font-size: 8px;
 }
 
 .snippet-delete-button {
@@ -87,5 +108,7 @@ body {
   border: none;
   color: #f2f2f7;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
 }

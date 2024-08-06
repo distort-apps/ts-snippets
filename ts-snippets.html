@@ -4,16 +4,21 @@
   <title>TS Snippets</title>
   <link rel="stylesheet" href="libs/monaco-editor/min/vs/editor/editor.main.css">
   <link rel="stylesheet" href="ts-snippets.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div id="container">
     <div id="sidebar">
-      <button id="newSnippet" class="snippet-button">+ New snippet</button>
-      <div id="snippets"></div>
+      <button id="newSnippet" class="snippet-button">+ new snippet</button>
+      <div id="snippets-container"></div>
     </div>
     <div id="editor-container">
       <div id="editor"></div>
-      <button id="runSnippet" class="snippet-editor-button">Run snippet</button>
+      <div class="snippet-controls">
+        <p>command + enter to run</p>
+        <p>'esc' key to toggle console</p>
+        <button id="runSnippet" class="snippet-editor-button"><i class="fa-solid fa-play"></i></button>
+      </div>
     </div>
   </div>
   <script src="libs/monaco-editor/min/vs/loader.js"></script>

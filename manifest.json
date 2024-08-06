@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ts-snippets",
-  "version": "1.0.0",
-  "description": "A simple TypeScript Chrome snippets extension",
+  "version": "1.0.1",
+  "description": "A chrome extension to save, run, and manage TypeScript snippets",
   "icons": {
     "16": "heart.png",
     "48": "heart.png",
@@ -14,32 +14,20 @@
       "48": "heart.png",
       "128": "heart.png"
     },
-    "default_title": "Timer Extension",
-    "default_popup": "popup.html"
+    "default_title": "ts-snippets",
+    "default_popup": "popup/popup.html"
   },
   "permissions": [
     "storage",
     "activeTab",
     "scripting",
-    "notifications",
-    "webNavigation",
-    "webRequest",
     "tabs",
     "background",
     "sidePanel"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  "options_page": "options.html",
+  "options_page": "options/options.html",
   "background": {
     "service_worker": "background.js"
   },
-  "devtools_page": "devtools.html", 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content-script.js"]
-    }
-  ]
+  "devtools_page": "devtools/devtools.html"
 }

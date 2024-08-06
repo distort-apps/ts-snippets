@@ -35,14 +35,13 @@ var TS_Snippets;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-/*!************************!*\
-  !*** ./ts-snippets.js ***!
-  \************************/
+/*!****************************************!*\
+  !*** ./src/ts-snippets/ts-snippets.js ***!
+  \****************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   addSnippet: () => (/* binding */ addSnippet),
-/* harmony export */   initializeMonaco: () => (/* binding */ initializeMonaco),
-/* harmony export */   runSnippet: () => (/* binding */ runSnippet)
+/* harmony export */   initializeMonaco: () => (/* binding */ initializeMonaco)
 /* harmony export */ });
 const snippets = [];
 
@@ -51,7 +50,6 @@ const newSnippetButton = document.getElementById('newSnippet');
 const runSnippetButton = document.getElementById('runSnippet');
 let editor;
 let activeSnippetIndex = null;
-let isDeletingSnippet = false;
 
 function initializeMonaco() {
   console.log('Initializing Monaco Editor');
@@ -60,6 +58,8 @@ function initializeMonaco() {
     language: 'typescript',
     theme: 'vs-dark',
   });
+
+  simulateEscapeKeyPress();
 
   // Load saved snippets from storage
   chrome.storage.local.get(['tsSnippets'], function(result) {
@@ -89,7 +89,7 @@ function initializeMonaco() {
 
   // Automatically save the content of the editor when it changes
   editor.onDidChangeModelContent(() => {
-    if (!isDeletingSnippet && activeSnippetIndex !== null && activeSnippetIndex < snippets.length) {
+    if (activeSnippetIndex !== null) {
       snippets[activeSnippetIndex].content = editor.getValue();
       saveSnippets();
     }
@@ -139,56 +139,48 @@ function renderSnippet(snippetNum) {
 }
 
 function deleteSnippet(snippetNum) {
-  isDeletingSnippet = true;
   snippets.splice(snippetNum, 1);
-
   if (activeSnippetIndex === snippetNum) {
-    activeSnippetIndex = null;
     editor.setValue('');
+    activeSnippetIndex = null;
   } else if (activeSnippetIndex > snippetNum) {
     activeSnippetIndex -= 1;
   }
-
-  // Ensure activeSnippetIndex is valid and focus on the next snippet if exists
-  if (activeSnippetIndex !== null && activeSnippetIndex >= snippets.length) {
-    activeSnippetIndex = null;
-    editor.setValue('');
-  } else if (activeSnippetIndex !== null) {
-    editor.setValue(snippets[activeSnippetIndex].content);
-  }
-
   saveSnippets();
   renderSnippets();
-  isDeletingSnippet = false;
 }
 
 function renderSnippets() {
   snippetsContainer.innerHTML = '';
-  snippets.forEach((snippet, snippetNum) => {
+  snippets.forEach((_, snippetNum) => {
     renderSnippet(snippetNum);
   });
 }
 
 function saveSnippets() {
-  try {
-    chrome.storage.local.set({ tsSnippets: snippets }, () => {
-      if (chrome.runtime.lastError) {
-        console.error("Error saving snippets:", chrome.runtime.lastError);
-      } else {
-        console.log('Snippets saved successfully');
-      }
-    });
-  } catch (error) {
-    console.error("Error in saveSnippets:", error);
-  }
+  chrome.storage.local.set({ tsSnippets: snippets });
+}
+
+function simulateEscapeKeyPress() {
+  const event = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    keyCode: 27,
+    code: 'Escape',
+    which: 27,
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  });
+
+  document.dispatchEvent(event);
 }
 
 function runSnippet(content) {
   try {
     const jsContent = ts.transpileModule(content, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText;
-    
+  
     console.log("Compiled JavaScript:", jsContent);
-    
+  
     chrome.devtools.inspectedWindow.eval(jsContent, function(result, isException) {
       if (isException) {
         console.error("Error running the snippet:", result);
@@ -196,9 +188,9 @@ function runSnippet(content) {
         console.log("Snippet ran successfully:", result);
       }
     });
-    
-  } catch (error) {
-    console.log("Are you missing a log statement? 🤔", error);
+
+  } catch(error) {
+    console.log("Are you missing a log statement? 🤔");
   }
 }
 
